@@ -155,32 +155,48 @@ cropRange.addEventListener('input', () => { cropPosition = Number(cropRange.valu
 resetCrop.addEventListener('click', () => { cropPosition = 50; cropRange.value = 50; updateCropLabel(); renderPanels(); });
 previousButton.addEventListener('click', () => goToSlide(activeSlide - 1));
 nextButton.addEventListener('click', () => goToSlide(activeSlide + 1));
-carousel.addEventListener('pointerdown', (event) => {
-  if (event.target.closest('.carousel-arrow') || panels.length < 2 || (event.pointerType === 'mouse' && event.button !== 0)) return;
+function startDrag(clientX, pointerId) {
+  if (panels.length < 2) return;
   dragging = true;
-  dragPointerId = event.pointerId;
-  dragStartX = event.clientX;
+  dragPointerId = pointerId;
+  dragStartX = clientX;
   dragOffsetX = 0;
-  carousel.setPointerCapture(event.pointerId);
   carouselTrack.classList.add('is-dragging');
-});
-carousel.addEventListener('pointermove', (event) => {
-  if (!dragging || event.pointerId !== dragPointerId) return;
-  dragOffsetX = event.clientX - dragStartX;
+}
+function moveDrag(clientX) {
+  if (!dragging) return;
+  dragOffsetX = clientX - dragStartX;
   if ((activeSlide === 0 && dragOffsetX > 0) || (activeSlide === panels.length - 1 && dragOffsetX < 0)) dragOffsetX *= 0.32;
   updateCarousel(dragOffsetX);
-});
-function finishDrag(event) {
-  if (!dragging || event.pointerId !== dragPointerId) return;
-  const threshold = Math.min(85, carousel.clientWidth * 0.18);
+}
+function finishDrag(pointerId) {
+  if (!dragging || pointerId !== dragPointerId) return;
+  const threshold = Math.min(70, carousel.clientWidth * 0.15);
   const direction = Math.abs(dragOffsetX) >= threshold ? (dragOffsetX < 0 ? 1 : -1) : 0;
   dragging = false;
   dragPointerId = undefined;
   carouselTrack.classList.remove('is-dragging');
   goToSlide(activeSlide + direction);
 }
-carousel.addEventListener('pointerup', finishDrag);
-carousel.addEventListener('pointercancel', finishDrag);
+carousel.addEventListener('pointerdown', (event) => {
+  if (event.target.closest('.carousel-arrow') || (event.pointerType === 'mouse' && event.button !== 0)) return;
+  startDrag(event.clientX, event.pointerId);
+  carousel.setPointerCapture(event.pointerId);
+});
+carousel.addEventListener('pointermove', (event) => { if (event.pointerId === dragPointerId) moveDrag(event.clientX); });
+carousel.addEventListener('pointerup', (event) => finishDrag(event.pointerId));
+carousel.addEventListener('pointercancel', (event) => finishDrag(event.pointerId));
+carousel.addEventListener('touchstart', (event) => {
+  if (dragging) return;
+  startDrag(event.touches[0].clientX, 'touch');
+}, { passive: true });
+carousel.addEventListener('touchmove', (event) => {
+  if (dragPointerId !== 'touch') return;
+  moveDrag(event.touches[0].clientX);
+  if (Math.abs(dragOffsetX) > 8) event.preventDefault();
+}, { passive: false });
+carousel.addEventListener('touchend', () => finishDrag('touch'));
+carousel.addEventListener('touchcancel', () => finishDrag('touch'));
 
 function canvasToBlob(canvas) { return new Promise((resolve) => canvas.toBlob(resolve, 'image/png')); }
 function triggerDownload(blob, name) { const url = URL.createObjectURL(blob); const link = document.createElement('a'); link.href = url; link.download = name; link.style.display = 'none'; document.body.append(link); link.click(); link.remove(); window.setTimeout(() => URL.revokeObjectURL(url), 30000); }
