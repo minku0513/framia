@@ -226,7 +226,7 @@ carousel.addEventListener('wheel', (event) => {
   const horizontalDelta = Math.abs(event.deltaX) > 0.5 ? event.deltaX : (event.shiftKey ? event.deltaY : 0);
   if (!horizontalDelta || panels.length < 2 || dragging) return;
   event.preventDefault();
-  wheelOffsetX = constrainOffset(wheelOffsetX - horizontalDelta);
+  wheelOffsetX = constrainOffset(wheelOffsetX - horizontalDelta * 0.68);
   carouselTrack.classList.add('is-dragging');
   updateCarousel(wheelOffsetX);
   window.clearTimeout(wheelSettleTimer);
@@ -235,7 +235,7 @@ carousel.addEventListener('wheel', (event) => {
     wheelOffsetX = 0;
     carouselTrack.classList.remove('is-dragging');
     goToSlide(activeSlide + direction);
-  }, 90);
+  }, 180);
 }, { passive: false });
 
 function canvasToBlob(canvas) { return new Promise((resolve) => canvas.toBlob(resolve, 'image/png')); }
