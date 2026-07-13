@@ -32,6 +32,9 @@ let dragStartX = 0;
 let dragOffsetX = 0;
 let dragging = false;
 let dragPointerId;
+let dragVelocityX = 0;
+let lastDragX = 0;
+let lastDragTime = 0;
 let wheelOffsetX = 0;
 let wheelSettleTimer;
 
@@ -163,10 +166,19 @@ function startDrag(clientX, pointerId) {
   dragPointerId = pointerId;
   dragStartX = clientX;
   dragOffsetX = 0;
+  dragVelocityX = 0;
+  lastDragX = clientX;
+  lastDragTime = performance.now();
   carouselTrack.classList.add('is-dragging');
 }
 function moveDrag(clientX) {
   if (!dragging) return;
+  const now = performance.now();
+  const elapsed = Math.max(1, now - lastDragTime);
+  const instantVelocity = (clientX - lastDragX) / elapsed;
+  dragVelocityX = dragVelocityX * 0.35 + instantVelocity * 0.65;
+  lastDragX = clientX;
+  lastDragTime = now;
   dragOffsetX = constrainOffset(clientX - dragStartX);
   updateCarousel(dragOffsetX);
 }
@@ -174,13 +186,16 @@ function constrainOffset(offset) {
   if ((activeSlide === 0 && offset > 0) || (activeSlide === panels.length - 1 && offset < 0)) return offset * 0.32;
   return offset;
 }
-function getSlideDirection(offset) {
+function getSlideDirection(offset, velocity = 0) {
   const threshold = carousel.clientWidth * 0.5;
-  return Math.abs(offset) >= threshold ? (offset < 0 ? 1 : -1) : 0;
+  const projectedOffset = offset + velocity * 180;
+  const passedThreshold = Math.abs(offset) >= threshold;
+  const momentumPassesThreshold = Math.abs(velocity) > 0.28 && Math.abs(projectedOffset) >= threshold;
+  return passedThreshold || momentumPassesThreshold ? ((passedThreshold ? offset : projectedOffset) < 0 ? 1 : -1) : 0;
 }
 function finishDrag(pointerId) {
   if (!dragging || (pointerId !== undefined && pointerId !== dragPointerId)) return;
-  const direction = getSlideDirection(dragOffsetX);
+  const direction = getSlideDirection(dragOffsetX, dragVelocityX);
   dragging = false;
   dragPointerId = undefined;
   carouselTrack.classList.remove('is-dragging');
