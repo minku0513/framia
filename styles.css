@@ -1,0 +1,56 @@
+:root { --ig-dark: #0c0f14; font-family: Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif; color: #f0f1f4; background: #0c0d10; }
+* { box-sizing: border-box; }
+body { min-width: 320px; margin: 0; background: #0c0d10; }
+button, input { font: inherit; }
+.site-header { display: flex; width: min(1180px, calc(100% - 48px)); align-items: center; justify-content: space-between; margin: 0 auto; padding: 30px 0 26px; }
+.brand { display: inline-flex; align-items: center; gap: 9px; color: #f5f5f6; font-family: Georgia, serif; font-size: 1.75rem; font-weight: 800; letter-spacing: -.06em; text-decoration: none; }
+.brand-mark { display: grid; width: 27px; height: 27px; place-items: center; border-radius: 8px; background: #f2f2f3; color: #17181d; font-family: Inter, sans-serif; font-size: .82rem; letter-spacing: 0; }
+.site-header p { margin: 0; color: #9296a0; font-size: .82rem; }
+.workspace { display: grid; grid-template-columns: minmax(320px, 400px) minmax(0, 1fr); width: min(1180px, calc(100% - 48px)); gap: 26px; margin: 0 auto 56px; align-items: start; }
+
+.editor-panel { padding: 27px; border: 1px solid #292c34; border-radius: 22px; background: #17191f; box-shadow: 0 18px 48px rgb(0 0 0 / 18%); }
+.eyebrow, .label { margin: 0 0 7px; color: #aeb3be; font-size: .67rem; font-weight: 850; letter-spacing: .14em; }
+.editor-heading { margin-bottom: 22px; }
+h1 { margin: 0; font-family: Georgia, serif; font-size: clamp(1.8rem, 3.2vw, 2.4rem); line-height: 1.04; letter-spacing: -.055em; }
+.upload-card { display: flex; min-height: 156px; flex-direction: column; align-items: center; justify-content: center; gap: 6px; border: 1.5px dashed #555b68; border-radius: 17px; background: #20232b; color: #a5abb6; cursor: pointer; transition: .18s ease; }
+.upload-card:hover, .upload-card.dragging { border-color: #eeeef0; background: #292d36; transform: translateY(-1px); }
+.upload-card input { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); }
+.upload-card strong { color: #f0f1f4; font-size: .9rem; }
+.upload-card span:last-child { max-width: 85%; overflow: hidden; font-size: .74rem; text-overflow: ellipsis; white-space: nowrap; }
+.upload-icon { display: grid; width: 32px; height: 32px; place-items: center; border-radius: 50%; background: #3b404c; color: #fff; font-size: 1.5rem; line-height: 1; }
+.fit-controls, .crop-controls, .color-controls { margin-top: 15px; padding: 15px; border-radius: 13px; background: #20232b; }
+.fit-controls { display: flex; align-items: stretch; flex-direction: column; gap: 12px; }
+.fit-controls strong, .control-heading strong { font-size: .83rem; }
+.fit-controls strong { display: block; white-space: nowrap; }
+.mode-buttons { display: flex; flex-wrap: wrap; justify-content: flex-start; gap: 4px; }
+button { border: 0; border-radius: 8px; background: #7f5836; color: #fff; cursor: pointer; }
+.mode-button { padding: 7px 8px; background: #353a45; color: #c2c6ce; font-size: .67rem; font-weight: 750; }
+.mode-button.active { background: #f1f1f2; color: #17181d; }
+.color-controls, .control-heading { display: flex; align-items: center; justify-content: space-between; color: #d5d8de; font-size: .78rem; font-weight: 700; }
+#colorControls[hidden] { display: none; }
+.color-controls.is-disabled { opacity: .42; }
+.color-controls.is-disabled input { cursor: not-allowed; }
+.color-controls input { width: 32px; height: 26px; padding: 0; border: 0; border-radius: 6px; background: transparent; cursor: pointer; }
+.text-button { padding: 0; background: transparent; color: #b8bdc6; font-size: .73rem; }
+.text-button:hover { color: #fff; text-decoration: underline; }
+input[type="range"] { width: 100%; margin: 14px 0 4px; accent-color: #f1f1f2; cursor: ew-resize; }
+.range-labels { display: flex; justify-content: space-between; color: #9298a3; font-size: .68rem; }
+.download-actions { display: flex; flex-wrap: wrap; gap: 7px; margin-top: 16px; }
+.download-actions button { padding: 10px 11px; border: 0; background: #fff; color: #17181d; font-size: .72rem; font-weight: 800; }
+.download-actions .secondary { margin-left: auto; background: #f1f1f2; color: #17181d; }
+button:disabled { opacity: .55; cursor: wait; }
+
+.preview-panel { position: sticky; top: 22px; display: grid; width: 100%; place-items: center; padding: 20px; border-radius: 22px; background: #17191f; color: #f7f7f7; box-shadow: 0 22px 54px rgb(0 0 0 / 22%); }
+.instagram-shell { overflow: hidden; width: min(100%, 430px); border: 1px solid #30333b; border-radius: 19px; background: var(--ig-dark); box-shadow: 0 14px 34px rgb(0 0 0 / 35%); }
+.profile-head { display: grid; grid-template-columns: 90px 1fr; gap: 20px; padding: 23px 18px 13px; }.placeholder-avatar { position: relative; width: 90px; height: 90px; border: 4px solid #292d36; border-radius: 50%; background: radial-gradient(circle at 35% 25%, #3b414c, #15171d 68%); }.placeholder-avatar span { position: absolute; right: -4px; bottom: 1px; display: grid; width: 28px; height: 28px; place-items: center; border: 3px solid #090909; border-radius: 50%; background: #f1f2f3; color: #141519; font-size: 1.35rem; }
+.profile-mask { display: flex; flex-direction: column; justify-content: center; gap: 11px; }.name-mask { display: block; width: 42%; height: 18px; border-radius: 6px; background: #292d36; }.placeholder-stats, .stat-captions { display: flex; justify-content: space-between; gap: 12px; }.placeholder-stats i { flex: 1; height: 25px; border-radius: 6px; background: #282c34; }.stat-captions i { flex: 1; height: 10px; border-radius: 5px; background: #20232a; }
+.highlight-mask { display: flex; width: 93px; height: 37px; align-items: center; gap: 9px; margin: 0 18px 15px; padding: 0 10px; border: 1px solid #292d36; border-radius: 999px; }.highlight-mask span { color: #b8bdc7; font-size: 1.2rem; }.highlight-mask i { width: 51px; height: 14px; border-radius: 5px; background: #282c34; }
+.dashboard-mask { display: flex; align-items: center; gap: 11px; margin: 0 18px 12px; padding: 15px; border-radius: 12px; background: linear-gradient(135deg, #272b34, #363a43); }.dashboard-mask span { color: #2bd16f; font-size: 1.35rem; }.dashboard-mask i { width: 48%; height: 18px; border-radius: 6px; background: #484c55; }.profile-actions-mask { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; margin: 0 18px 15px; }.profile-actions-mask i { height: 36px; border-radius: 11px; background: #292d36; }
+.ig-tabs { display: grid; grid-template-columns: repeat(4, 1fr); height: 55px; align-items: stretch; border-bottom: 1px solid #242424; background: var(--ig-dark); text-align: center; }.tab-icon { position: relative; display: grid; width: 100%; height: 55px; place-items: center; }.tab-icon img { display: block; width: 38px; height: 38px; object-fit: contain; mix-blend-mode: normal; }.tab-icon.active::after { position: absolute; right: 0; bottom: 0; left: 0; height: 2px; background: #fff; content: ""; }
+.feed-shell { width: 100%; overflow: hidden; background: var(--ig-dark); }
+.panels-wrap { position: relative; display: grid; grid-template-columns: repeat(3, 1fr); gap: 2px; min-height: 0; background: var(--ig-dark); }
+.panel { position: relative; overflow: hidden; aspect-ratio: 3 / 4; background: #171717; }.render-canvas { display: none; }.grid-preview { display: block; width: 100%; height: 100%; }
+.panel span { position: absolute; top: 7px; right: 7px; display: grid; width: 20px; height: 20px; place-items: center; border-radius: 6px; background: rgb(0 0 0 / 58%); color: #fff; font-size: .65rem; font-weight: 800; }
+.empty-state { position: absolute; inset: 16px; display: flex; align-items: center; gap: 7px; padding: 13px 16px; border: 1px solid rgb(255 255 255 / 8%); border-radius: 13px; background: #2c2f36; box-shadow: 0 10px 20px rgb(0 0 0 / 30%); color: #c8cbd2; font-size: .8rem; }.empty-state[hidden] { display: none; }.empty-state b { color: #fff; }
+
+@media (max-width: 760px) { .site-header, .workspace { width: min(100% - 28px, 560px); }.site-header { padding: 22px 0 18px; }.site-header p { display: none; }.workspace { display: flex; flex-direction: column; gap: 18px; margin-bottom: 30px; }.editor-panel, .preview-panel { width: 100%; }.preview-panel { position: static; padding: 10px; border-radius: 16px; }.instagram-shell { width: 100%; }.editor-panel { padding: 20px; }.fit-controls { align-items: flex-start; flex-direction: column; }.mode-buttons { justify-content: flex-start; } }

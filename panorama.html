@@ -1,0 +1,79 @@
+<!doctype html>
+<html lang="ko">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Framia — 인스타 파노라마 메이커</title>
+    <link rel="stylesheet" href="./styles.css" />
+  </head>
+  <body>
+    <header class="site-header">
+      <a class="brand" href="./index.html" aria-label="Framia 홈"><span class="brand-mark">F</span>Framia</a>
+      <p>파노라마를 이어지는 세 장의 게시물로</p>
+    </header>
+
+    <main class="workspace">
+      <section class="editor-panel" aria-label="파노라마 편집 도구">
+        <div class="editor-heading"><p class="eyebrow">PANORAMA MAKER</p><h1>파노라마를<br />세 장으로 나누세요.</h1></div>
+        <label class="upload-card" id="uploadCard" for="imageInput">
+          <input id="imageInput" type="file" accept="image/*" />
+          <span class="upload-icon" aria-hidden="true">＋</span>
+          <strong>파노라마 선택</strong>
+          <span id="fileStatus">JPG, PNG, WebP</span>
+        </label>
+
+        <div id="fitControls" class="fit-controls" hidden>
+          <div><p class="label">맞춤 방식</p><strong>사진을 어떻게 담을까요?</strong></div>
+          <div class="mode-buttons" role="group" aria-label="이미지 맞춤 방식">
+            <button type="button" data-mode="crop" class="mode-button active">중앙 크롭</button>
+            <button type="button" data-mode="fill" class="mode-button">블러 채우기</button>
+            <button type="button" data-mode="solid" class="mode-button">단색 채우기</button>
+          </div>
+        </div>
+        <div id="colorControls" class="color-controls" hidden><span>레터박스 색상</span><input id="solidColor" type="color" value="#1d1c1a" aria-label="레터박스 색상" /></div>
+        <div id="cropControls" class="crop-controls" hidden>
+          <div class="control-heading"><div><p class="label">크롭 위치</p><strong id="cropValue">가운데</strong></div><button id="resetCrop" class="text-button" type="button">가운데로</button></div>
+          <input id="cropRange" type="range" min="0" max="100" value="50" aria-label="파노라마 크롭 위치" />
+          <div class="range-labels"><span>왼쪽</span><span>오른쪽</span></div>
+        </div>
+        <div id="downloadActions" class="download-actions" hidden>
+          <button type="button" data-panel="0">1번 저장</button>
+          <button type="button" data-panel="1">2번 저장</button>
+          <button type="button" data-panel="2">3번 저장</button>
+          <button type="button" class="secondary" id="downloadAll">ZIP으로 3장 저장</button>
+        </div>
+      </section>
+
+      <section class="preview-panel" id="previewPanel" aria-label="인스타그램 프로필 미리보기" aria-live="polite">
+        <div class="instagram-shell">
+          <div class="profile-head" aria-hidden="true">
+            <div class="placeholder-avatar"><span>＋</span></div>
+            <div class="profile-mask">
+              <i class="name-mask"></i>
+              <div class="placeholder-stats"><i></i><i></i><i></i></div>
+              <div class="stat-captions"><i></i><i></i><i></i></div>
+            </div>
+          </div>
+          <div class="highlight-mask" aria-hidden="true"><span>＋</span><i></i></div>
+          <div class="dashboard-mask" aria-hidden="true"><span>↗</span><i></i></div>
+          <div class="profile-actions-mask" aria-hidden="true"><i></i><i></i></div>
+          <div class="ig-tabs" aria-label="게시물 탭">
+            <span class="tab-icon active" aria-hidden="true"><img src="./assets/icons/posts.jpeg" alt="" /></span>
+            <span class="tab-icon" aria-hidden="true"><img src="./assets/icons/reels.jpeg" alt="" /></span>
+            <span class="tab-icon" aria-hidden="true"><img src="./assets/icons/reposts.jpeg" alt="" /></span>
+            <span class="tab-icon" aria-hidden="true"><img src="./assets/icons/tagged.jpeg" alt="" /></span>
+          </div>
+          <div class="feed-shell">
+            <div class="panels-wrap" id="panelsWrap" aria-label="첫 번째 게시물 행 미리보기">
+            <div class="panel"><canvas class="render-canvas" id="panel1" width="1080" height="1440" aria-label="첫 번째 출력 이미지"></canvas><canvas class="grid-preview" width="600" height="800" aria-label="첫 번째 게시물 미리보기"></canvas><span>1</span></div>
+            <div class="panel"><canvas class="render-canvas" id="panel2" width="1080" height="1440" aria-label="두 번째 출력 이미지"></canvas><canvas class="grid-preview" width="600" height="800" aria-label="두 번째 게시물 미리보기"></canvas><span>2</span></div>
+            <div class="panel"><canvas class="render-canvas" id="panel3" width="1080" height="1440" aria-label="세 번째 출력 이미지"></canvas><canvas class="grid-preview" width="600" height="800" aria-label="세 번째 게시물 미리보기"></canvas><span>3</span></div>
+            <div id="emptyState" class="empty-state"><b>파노라마 미리보기</b><span>사진을 올려 시작하세요</span></div>
+            </div>
+          </div>
+        </div>
+      </section>
+    </main>
+    <script src="./app.js"></script>
+  </body>
+</html>

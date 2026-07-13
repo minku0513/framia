@@ -1,0 +1,7 @@
+services:
+  framia:
+    build: .
+    container_name: framia
+    ports:
+      - "127.0.0.1:3000:80"
+    restart: unless-stopped

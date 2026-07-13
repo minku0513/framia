@@ -1,0 +1,61 @@
+<!doctype html>
+<html lang="ko">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Framia — 게시물 비율 맞추기</title>
+    <link rel="stylesheet" href="./ratio.css" />
+  </head>
+  <body>
+    <header class="site-header">
+      <a class="brand" href="./index.html" aria-label="Framia 홈"><span class="brand-mark">F</span>Framia</a>
+      <p>사진을 단색 배경의 게시물로</p>
+    </header>
+
+    <main class="workspace">
+      <section class="editor-panel" aria-label="게시물 비율 맞추기 도구">
+        <div class="editor-heading"><p class="eyebrow">POST FORMAT</p><h1>사진을 딱 맞는<br />게시물로 만드세요.</h1></div>
+        <label class="upload-card" id="uploadCard" for="imageInput">
+          <input id="imageInput" type="file" accept="image/*" />
+          <span class="upload-icon" aria-hidden="true">＋</span>
+          <strong>사진 선택</strong>
+          <span id="fileStatus">JPG, PNG, WebP</span>
+        </label>
+
+        <div id="formatControls" class="format-controls" hidden>
+          <div><p class="label">게시물 비율</p><strong>어떤 비율로 만들까요?</strong></div>
+          <div class="format-buttons" role="group" aria-label="게시물 비율">
+            <button class="format-button active" type="button" data-ratio="portrait">세로 3:4</button>
+            <button class="format-button" type="button" data-ratio="square">정사각형 1:1</button>
+          </div>
+        </div>
+        <div id="colorControls" class="color-controls" hidden><span>배경 색상</span><input id="backgroundColor" type="color" value="#1d1c1a" aria-label="배경 색상" /></div>
+        <div id="sizeControls" class="size-controls" hidden>
+          <div class="control-heading"><div><p class="label">사진 크기</p><strong id="scaleValue">양옆 맞춤</strong></div><button id="resetSize" class="text-button" type="button">기본값</button></div>
+          <input id="scaleRange" type="range" min="55" max="100" value="100" aria-label="사진 크기" />
+          <div class="range-labels"><span>여백 크게</span><span>화면 채움</span></div>
+        </div>
+        <div id="downloadActions" class="download-actions" hidden><button type="button" id="downloadImage">이미지 저장</button></div>
+      </section>
+
+      <section class="preview-panel" id="previewPanel" aria-label="인스타그램 게시물 미리보기" aria-live="polite">
+        <div class="instagram-post">
+          <div class="post-author" aria-hidden="true"><span class="author-avatar"></span><span class="author-name"></span><span class="more-icon">•••</span></div>
+          <div class="post-image" id="postImage">
+            <canvas id="previewCanvas" width="1080" height="1440" aria-label="게시물 미리보기"></canvas>
+            <div id="emptyState" class="empty-state"><b>게시물 미리보기</b><span>사진을 올려 시작하세요</span></div>
+          </div>
+          <div class="post-actions" aria-hidden="true">
+            <img src="./assets/post-icons/heart.jpeg" alt="" />
+            <img src="./assets/post-icons/comment.jpeg" alt="" />
+            <img src="./assets/post-icons/repost.jpeg" alt="" />
+            <img src="./assets/post-icons/share.jpeg" alt="" />
+            <img class="bookmark" src="./assets/post-icons/bookmark.jpeg" alt="" />
+          </div>
+          <div class="post-copy" aria-hidden="true"><i class="copy-avatar"></i><i class="copy-line primary"></i><i class="copy-line short"></i><i class="copy-line wide"></i></div>
+        </div>
+      </section>
+    </main>
+    <script src="./ratio.js"></script>
+  </body>
+</html>

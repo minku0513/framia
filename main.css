@@ -1,0 +1,25 @@
+@font-face { font-family: "BM Hanna Pro"; src: url("./assets/fonts/BMHANNAProOTF.otf") format("opentype"); font-display: swap; }
+:root { font-family: Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif; color: #f3f4f6; background: #0c0d10; }
+* { box-sizing: border-box; }
+body { min-width: 320px; min-height: 100vh; margin: 0; background: radial-gradient(circle at 78% 8%, #20242d 0, #0c0d10 36rem); }
+.home-shell { width: min(1120px, calc(100% - 48px)); margin: 0 auto; padding: 30px 0 72px; }
+.home-header { display: flex; align-items: center; justify-content: space-between; }
+.brand { display: inline-flex; align-items: center; gap: 9px; color: #f4f5f7; font-family: Georgia, serif; font-size: 1.75rem; font-weight: 800; letter-spacing: -.06em; text-decoration: none; }
+.brand span { display: grid; width: 27px; height: 27px; place-items: center; border-radius: 8px; background: #f2f3f4; color: #15161a; font-family: Inter, sans-serif; font-size: .82rem; letter-spacing: 0; }
+.home-header p { margin: 0; color: #9298a4; font-size: .82rem; }
+.hero { max-width: 650px; padding: 108px 0 50px; }
+.eyebrow, .card-label { margin: 0 0 10px; color: #aeb4c0; font-size: .68rem; font-weight: 850; letter-spacing: .14em; }
+h1 { margin: 0; font-family: "BM Hanna Pro", Georgia, serif; font-size: clamp(3rem, 7vw, 5.6rem); font-weight: 400; line-height: .96; letter-spacing: -.045em; }
+.hero-brand { font-family: Georgia, serif; font-weight: 800; letter-spacing: -.065em; }
+.intro { max-width: 480px; margin: 24px 0 0; color: #adb2bc; font-size: 1.03rem; line-height: 1.6; }
+.tool-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 14px; }
+.tool-card { position: relative; display: flex; min-height: 370px; flex-direction: column; overflow: hidden; padding: 21px; border: 1px solid #2a2e37; border-radius: 18px; background: #17191f; color: inherit; text-decoration: none; }
+.tool-card.active { border-color: #626976; background: linear-gradient(145deg, #20242c, #16181e); transition: transform .18s ease, border-color .18s ease; }
+.tool-card.active:hover { border-color: #e2e5e9; transform: translateY(-4px); }
+.tool-visual { position: relative; display: flex; height: 165px; align-items: center; justify-content: center; gap: 6px; margin: -3px -3px 25px; overflow: hidden; border-radius: 12px; background: #0e1015; }
+.tool-visual::before { position: absolute; inset: 0; background: radial-gradient(circle at 65% 30%, rgb(105 118 140 / 27%), transparent 43%); content: ""; }
+.ratio-visual span { position: relative; display: block; border: 1px solid #7b8494; border-radius: 4px; }.ratio-visual span:nth-child(1) { width: 83px; height: 104px; }.ratio-visual span:nth-child(2) { width: 62px; height: 84px; opacity: .65; }.ratio-visual span:nth-child(3) { width: 42px; height: 62px; opacity: .4; }
+.portrait-visual span { position: relative; display: block; width: 71px; height: 118px; border-radius: 5px; background: linear-gradient(160deg, #737f90, #222936 72%); }.portrait-visual span:last-child { margin-left: -20px; opacity: .52; }
+.panorama-visual { gap: 2px; }.panorama-visual span { position: relative; width: 30%; height: 118px; background: linear-gradient(165deg, #7e899c 0, #424d60 43%, #1a202b 100%); }.panorama-visual span:nth-child(2) { background: linear-gradient(165deg, #8d98aa 0, #566276 43%, #202733 100%); }.panorama-visual span:nth-child(3) { background: linear-gradient(165deg, #69758b 0, #394557 43%, #161c26 100%); }
+.tool-copy { margin-top: auto; }.tool-copy h2 { margin: 0; font-size: 1.15rem; letter-spacing: -.035em; }.tool-copy p:last-child { margin: 9px 0 0; color: #a4aab5; font-size: .83rem; line-height: 1.55; }.active .card-label { color: #d6dbe2; }.pending { opacity: .78; }.card-status { margin-top: 17px; color: #858c98; font-size: .73rem; font-weight: 750; }.card-arrow { position: absolute; right: 20px; bottom: 19px; color: #fff; font-size: 1.45rem; }
+@media (max-width: 760px) { .home-shell { width: min(100% - 28px, 560px); padding-bottom: 40px; }.home-header p { display: none; }.hero { padding: 72px 0 36px; }.tool-grid { grid-template-columns: 1fr; }.tool-card { min-height: 290px; }.tool-visual { height: 125px; margin-bottom: 19px; } }
