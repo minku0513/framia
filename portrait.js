@@ -32,6 +32,8 @@ let dragStartX = 0;
 let dragOffsetX = 0;
 let dragging = false;
 let dragPointerId;
+let wheelOffsetX = 0;
+let wheelSettleTimer;
 
 function getTargetRatio() { return (PANEL_WIDTH / PANEL_HEIGHT) * panelCount; }
 
@@ -165,38 +167,34 @@ function startDrag(clientX, pointerId) {
 }
 function moveDrag(clientX) {
   if (!dragging) return;
-  dragOffsetX = clientX - dragStartX;
-  if ((activeSlide === 0 && dragOffsetX > 0) || (activeSlide === panels.length - 1 && dragOffsetX < 0)) dragOffsetX *= 0.32;
+  dragOffsetX = constrainOffset(clientX - dragStartX);
   updateCarousel(dragOffsetX);
+}
+function constrainOffset(offset) {
+  if ((activeSlide === 0 && offset > 0) || (activeSlide === panels.length - 1 && offset < 0)) return offset * 0.32;
+  return offset;
+}
+function getSlideDirection(offset) {
+  const threshold = carousel.clientWidth * 0.5;
+  return Math.abs(offset) >= threshold ? (offset < 0 ? 1 : -1) : 0;
 }
 function finishDrag(pointerId) {
   if (!dragging || (pointerId !== undefined && pointerId !== dragPointerId)) return;
-  const threshold = Math.min(70, carousel.clientWidth * 0.15);
-  const direction = Math.abs(dragOffsetX) >= threshold ? (dragOffsetX < 0 ? 1 : -1) : 0;
+  const direction = getSlideDirection(dragOffsetX);
   dragging = false;
   dragPointerId = undefined;
   carouselTrack.classList.remove('is-dragging');
   goToSlide(activeSlide + direction);
 }
 carousel.addEventListener('pointerdown', (event) => {
-  if (event.target.closest('.carousel-arrow') || (event.pointerType === 'mouse' && event.button !== 0)) return;
+  if (event.target.closest('.carousel-arrow') || event.pointerType === 'mouse') return;
   startDrag(event.clientX, event.pointerId);
-  try { carousel.setPointerCapture(event.pointerId); } catch { /* Safari fallback uses window mouse events below. */ }
+  try { carousel.setPointerCapture(event.pointerId); } catch { /* Touch fallback below handles Safari. */ }
 });
 carousel.addEventListener('pointermove', (event) => { if (event.pointerId === dragPointerId) moveDrag(event.clientX); });
 carousel.addEventListener('pointerup', (event) => finishDrag(event.pointerId));
 carousel.addEventListener('pointercancel', (event) => finishDrag(event.pointerId));
 carousel.addEventListener('lostpointercapture', () => finishDrag());
-carousel.addEventListener('mousedown', (event) => {
-  if (dragging || event.target.closest('.carousel-arrow') || event.button !== 0) return;
-  startDrag(event.clientX, 'mouse');
-});
-window.addEventListener('mousemove', (event) => {
-  if (dragPointerId === 'mouse' || typeof dragPointerId === 'number') moveDrag(event.clientX);
-});
-window.addEventListener('mouseup', () => {
-  if (dragPointerId === 'mouse' || typeof dragPointerId === 'number') finishDrag();
-});
 window.addEventListener('blur', () => finishDrag());
 carousel.addEventListener('touchstart', (event) => {
   if (dragging) return;
@@ -209,6 +207,21 @@ carousel.addEventListener('touchmove', (event) => {
 }, { passive: false });
 carousel.addEventListener('touchend', () => finishDrag('touch'));
 carousel.addEventListener('touchcancel', () => finishDrag('touch'));
+carousel.addEventListener('wheel', (event) => {
+  const horizontalDelta = Math.abs(event.deltaX) > 0.5 ? event.deltaX : (event.shiftKey ? event.deltaY : 0);
+  if (!horizontalDelta || panels.length < 2 || dragging) return;
+  event.preventDefault();
+  wheelOffsetX = constrainOffset(wheelOffsetX - horizontalDelta);
+  carouselTrack.classList.add('is-dragging');
+  updateCarousel(wheelOffsetX);
+  window.clearTimeout(wheelSettleTimer);
+  wheelSettleTimer = window.setTimeout(() => {
+    const direction = getSlideDirection(wheelOffsetX);
+    wheelOffsetX = 0;
+    carouselTrack.classList.remove('is-dragging');
+    goToSlide(activeSlide + direction);
+  }, 90);
+}, { passive: false });
 
 function canvasToBlob(canvas) { return new Promise((resolve) => canvas.toBlob(resolve, 'image/png')); }
 function triggerDownload(blob, name) { const url = URL.createObjectURL(blob); const link = document.createElement('a'); link.href = url; link.download = name; link.style.display = 'none'; document.body.append(link); link.click(); link.remove(); window.setTimeout(() => URL.revokeObjectURL(url), 30000); }
