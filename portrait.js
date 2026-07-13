@@ -28,7 +28,10 @@ let panelCount = 3;
 let cropPosition = 50;
 let activeSlide = 0;
 let panels = [];
-let touchStartX = 0;
+let dragStartX = 0;
+let dragOffsetX = 0;
+let dragging = false;
+let dragPointerId;
 
 function getTargetRatio() { return (PANEL_WIDTH / PANEL_HEIGHT) * panelCount; }
 
@@ -99,8 +102,8 @@ function renderCarousel() {
   updateCarousel();
 }
 
-function updateCarousel() {
-  carouselTrack.style.transform = `translateX(-${activeSlide * 100}%)`;
+function updateCarousel(offset = 0) {
+  carouselTrack.style.transform = `translateX(calc(-${activeSlide * 100}% + ${offset}px))`;
   pageCount.textContent = `${activeSlide + 1}/${panels.length}`;
   [...carouselDots.children].forEach((dot, index) => dot.classList.toggle('active', index === activeSlide));
   previousButton.hidden = activeSlide === 0 || panels.length < 2;
@@ -152,8 +155,32 @@ cropRange.addEventListener('input', () => { cropPosition = Number(cropRange.valu
 resetCrop.addEventListener('click', () => { cropPosition = 50; cropRange.value = 50; updateCropLabel(); renderPanels(); });
 previousButton.addEventListener('click', () => goToSlide(activeSlide - 1));
 nextButton.addEventListener('click', () => goToSlide(activeSlide + 1));
-carousel.addEventListener('touchstart', (event) => { touchStartX = event.touches[0].clientX; }, { passive: true });
-carousel.addEventListener('touchend', (event) => { const distance = event.changedTouches[0].clientX - touchStartX; if (Math.abs(distance) > 40) goToSlide(activeSlide + (distance < 0 ? 1 : -1)); }, { passive: true });
+carousel.addEventListener('pointerdown', (event) => {
+  if (event.target.closest('.carousel-arrow') || panels.length < 2 || (event.pointerType === 'mouse' && event.button !== 0)) return;
+  dragging = true;
+  dragPointerId = event.pointerId;
+  dragStartX = event.clientX;
+  dragOffsetX = 0;
+  carousel.setPointerCapture(event.pointerId);
+  carouselTrack.classList.add('is-dragging');
+});
+carousel.addEventListener('pointermove', (event) => {
+  if (!dragging || event.pointerId !== dragPointerId) return;
+  dragOffsetX = event.clientX - dragStartX;
+  if ((activeSlide === 0 && dragOffsetX > 0) || (activeSlide === panels.length - 1 && dragOffsetX < 0)) dragOffsetX *= 0.32;
+  updateCarousel(dragOffsetX);
+});
+function finishDrag(event) {
+  if (!dragging || event.pointerId !== dragPointerId) return;
+  const threshold = Math.min(85, carousel.clientWidth * 0.18);
+  const direction = Math.abs(dragOffsetX) >= threshold ? (dragOffsetX < 0 ? 1 : -1) : 0;
+  dragging = false;
+  dragPointerId = undefined;
+  carouselTrack.classList.remove('is-dragging');
+  goToSlide(activeSlide + direction);
+}
+carousel.addEventListener('pointerup', finishDrag);
+carousel.addEventListener('pointercancel', finishDrag);
 
 function canvasToBlob(canvas) { return new Promise((resolve) => canvas.toBlob(resolve, 'image/png')); }
 function triggerDownload(blob, name) { const url = URL.createObjectURL(blob); const link = document.createElement('a'); link.href = url; link.download = name; link.style.display = 'none'; document.body.append(link); link.click(); link.remove(); window.setTimeout(() => URL.revokeObjectURL(url), 30000); }
