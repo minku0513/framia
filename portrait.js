@@ -156,7 +156,7 @@ resetCrop.addEventListener('click', () => { cropPosition = 50; cropRange.value =
 previousButton.addEventListener('click', () => goToSlide(activeSlide - 1));
 nextButton.addEventListener('click', () => goToSlide(activeSlide + 1));
 function startDrag(clientX, pointerId) {
-  if (panels.length < 2) return;
+  if (panels.length < 2 || dragging) return;
   dragging = true;
   dragPointerId = pointerId;
   dragStartX = clientX;
@@ -170,7 +170,7 @@ function moveDrag(clientX) {
   updateCarousel(dragOffsetX);
 }
 function finishDrag(pointerId) {
-  if (!dragging || pointerId !== dragPointerId) return;
+  if (!dragging || (pointerId !== undefined && pointerId !== dragPointerId)) return;
   const threshold = Math.min(70, carousel.clientWidth * 0.15);
   const direction = Math.abs(dragOffsetX) >= threshold ? (dragOffsetX < 0 ? 1 : -1) : 0;
   dragging = false;
@@ -181,11 +181,23 @@ function finishDrag(pointerId) {
 carousel.addEventListener('pointerdown', (event) => {
   if (event.target.closest('.carousel-arrow') || (event.pointerType === 'mouse' && event.button !== 0)) return;
   startDrag(event.clientX, event.pointerId);
-  carousel.setPointerCapture(event.pointerId);
+  try { carousel.setPointerCapture(event.pointerId); } catch { /* Safari fallback uses window mouse events below. */ }
 });
 carousel.addEventListener('pointermove', (event) => { if (event.pointerId === dragPointerId) moveDrag(event.clientX); });
 carousel.addEventListener('pointerup', (event) => finishDrag(event.pointerId));
 carousel.addEventListener('pointercancel', (event) => finishDrag(event.pointerId));
+carousel.addEventListener('lostpointercapture', () => finishDrag());
+carousel.addEventListener('mousedown', (event) => {
+  if (dragging || event.target.closest('.carousel-arrow') || event.button !== 0) return;
+  startDrag(event.clientX, 'mouse');
+});
+window.addEventListener('mousemove', (event) => {
+  if (dragPointerId === 'mouse' || typeof dragPointerId === 'number') moveDrag(event.clientX);
+});
+window.addEventListener('mouseup', () => {
+  if (dragPointerId === 'mouse' || typeof dragPointerId === 'number') finishDrag();
+});
+window.addEventListener('blur', () => finishDrag());
 carousel.addEventListener('touchstart', (event) => {
   if (dragging) return;
   startDrag(event.touches[0].clientX, 'touch');
