@@ -31,6 +31,11 @@
           </div>
         </div>
         <div id="colorControls" class="color-controls" hidden><span>레터박스 색상</span><input id="solidColor" type="color" value="#1d1c1a" aria-label="레터박스 색상" /></div>
+        <div id="solidSizeControls" class="crop-controls" hidden>
+          <div class="control-heading"><div><p class="label">사진 크기</p><strong id="solidSizeValue">전체 보이기</strong></div><button id="resetSolidSize" class="text-button" type="button">기본값</button></div>
+          <input id="solidSizeRange" type="range" min="45" max="100" value="100" aria-label="단색 배경 안 사진 크기" />
+          <div class="range-labels"><span>여백 크게</span><span>화면 채움</span></div>
+        </div>
         <div id="cropControls" class="crop-controls" hidden>
           <div class="control-heading"><div><p class="label">크롭 위치</p><strong id="cropValue">가운데</strong></div><button id="resetCrop" class="text-button" type="button">가운데로</button></div>
           <input id="cropRange" type="range" min="0" max="100" value="50" aria-label="파노라마 크롭 위치" />

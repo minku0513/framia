@@ -16,11 +16,16 @@ const fitControls = document.querySelector('#fitControls');
 const modeButtons = [...document.querySelectorAll('[data-mode]')];
 const colorControls = document.querySelector('#colorControls');
 const solidColor = document.querySelector('#solidColor');
+const solidSizeControls = document.querySelector('#solidSizeControls');
+const solidSizeRange = document.querySelector('#solidSizeRange');
+const solidSizeValue = document.querySelector('#solidSizeValue');
+const resetSolidSize = document.querySelector('#resetSolidSize');
 let filename = 'framia-panorama';
 let sourceImage;
 let cropPosition = 50;
 let fitMode = 'crop';
 let letterboxColor = solidColor.value;
+let solidImageScale = 100;
 const masterCanvas = document.createElement('canvas');
 const blurCanvas = document.createElement('canvas');
 masterCanvas.width = panels.reduce((width, panel) => width + panel.width, 0);
@@ -86,7 +91,8 @@ function renderFilledPanels(totalRatio) {
     drawBlurredBackground(context, sourceRatio, totalRatio, width, height);
   }
 
-  const foregroundScale = sourceRatio > totalRatio ? width / sourceImage.width : height / sourceImage.height;
+  const containScale = Math.min(width / sourceImage.width, height / sourceImage.height);
+  const foregroundScale = fitMode === 'solid' ? containScale * (solidImageScale / 100) : containScale;
   const foregroundWidth = sourceImage.width * foregroundScale;
   const foregroundHeight = sourceImage.height * foregroundScale;
   context.drawImage(sourceImage, (width - foregroundWidth) / 2, (height - foregroundHeight) / 2, foregroundWidth, foregroundHeight);
@@ -134,9 +140,22 @@ function updateVisibleControls() {
   const totalRatio = (panels[0].width / panels[0].height) * panels.length;
   cropControls.hidden = fitMode !== 'crop' || sourceImage.width / sourceImage.height <= totalRatio;
   colorControls.hidden = fitMode !== 'solid';
+  solidSizeControls.hidden = fitMode !== 'solid';
   solidColor.disabled = fitMode !== 'solid';
   colorControls.classList.remove('is-disabled');
+  if (fitMode === 'solid') updateSolidSizeRange();
   modeButtons.forEach((button) => button.classList.toggle('active', button.dataset.mode === fitMode));
+}
+
+function updateSolidSizeRange() {
+  const containScale = Math.min(masterCanvas.width / sourceImage.width, masterCanvas.height / sourceImage.height);
+  const coverScale = Math.max(masterCanvas.width / sourceImage.width, masterCanvas.height / sourceImage.height);
+  solidSizeRange.max = Math.max(100, Math.ceil((coverScale / containScale) * 100));
+  solidImageScale = Math.min(solidImageScale, Number(solidSizeRange.max));
+  solidSizeRange.value = solidImageScale;
+  if (solidImageScale === 100) solidSizeValue.textContent = '전체 보이기';
+  else if (solidImageScale === Number(solidSizeRange.max)) solidSizeValue.textContent = '화면 채움';
+  else solidSizeValue.textContent = `${solidImageScale}%`;
 }
 
 function updateCropLabel() {
@@ -152,6 +171,7 @@ function drawImage(file) {
   image.onload = () => {
     sourceImage = image;
     cropPosition = 50;
+    solidImageScale = 100;
     cropRange.value = cropPosition;
     cropRange.disabled = image.width / image.height <= (panels[0].width / panels[0].height) * panels.length;
     updateCropLabel();
@@ -200,6 +220,16 @@ modeButtons.forEach((button) => button.addEventListener('click', () => {
 }));
 solidColor.addEventListener('input', () => {
   letterboxColor = solidColor.value;
+  if (fitMode === 'solid') renderPanels();
+});
+solidSizeRange.addEventListener('input', () => {
+  solidImageScale = Number(solidSizeRange.value);
+  updateSolidSizeRange();
+  if (fitMode === 'solid') renderPanels();
+});
+resetSolidSize.addEventListener('click', () => {
+  solidImageScale = 100;
+  updateSolidSizeRange();
   if (fitMode === 'solid') renderPanels();
 });
 
